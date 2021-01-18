@@ -1,4 +1,16 @@
 /*
+ * CRC code and LUT generator for polynomials up to 128 bits.
+ *
+ * (c) T K See Tho 2020-12-27
+ * tkseetho@gmail.com 
+ * GPG public key signature F489 A852 333D 5FBD CF6E  26DF AD5A B2C4 24BC 86B9
+ *
+ * This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.
+ * https://creativecommons.org/licenses/by-nc/4.0/
+ *
+ */
+
+/*
  * Data structures and functions for CRC generation.
  *
  * All polynomials and crc registers are left justified, i.e. the front of the 

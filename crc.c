@@ -1,9 +1,13 @@
 /*
- * Program to generate CRC value given a polynomial and other parameters
- * against data from a file or from stdin.
- * Polynomial can be specified up to 128 bits in a hexadecimal format.
+ * CRC code and LUT generator for polynomials up to 128 bits.
  *
  * (c) T K See Tho 2020-12-27
+ * tkseetho@gmail.com 
+ * GPG public key signature F489 A852 333D 5FBD CF6E  26DF AD5A B2C4 24BC 86B9
+ *
+ * This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.
+ * https://creativecommons.org/licenses/by-nc/4.0/
+ *
  */
 
 #include <stdio.h>
@@ -26,7 +30,8 @@ const uint8_t TestData[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39
  * Print title and version
  */
 void print_title() {
-    printf("SeeTho's Generic CRC Code Generator (2020-12-27)\n");
+    printf("SeeTho's Generic CRC Code and LUT Generator\n");
+    printf("(c) T K See Tho 2020-12-27 CC BY-NC-SA\n");
     printf("Revision %s\n\n", SWVersion);
 }
 
@@ -328,14 +333,16 @@ int main(int argc, char *argv[]) {
 
     // must have GPOLY
     if (!gotpoly) {
-        printf("Generator polynomial must be specified!\n");
+        printf("Generator polynomial must be specified!\n\n");
+        print_usage(argv[0]);
         return 1;
     }
 
     // check init string
     if (doinit)
         if (strlen(gpstr) != strlen(initstr)) {
-            printf("Size of INIT does not match GPOLY!\n");
+            printf("Size of INIT does not match GPOLY!\n\n");
+            print_usage(argv[0]);
             return 1;
         }
 
