@@ -5,8 +5,8 @@
  * tkseetho@gmail.com 
  * GPG public key signature F489 A852 333D 5FBD CF6E  26DF AD5A B2C4 24BC 86B9
  *
- * This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.
- * https://creativecommons.org/licenses/by-nc/4.0/
+ * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+ * https://creativecommons.org/licenses/by-nc-sa/4.0/
  *
  */
 
@@ -31,7 +31,7 @@ const uint8_t TestData[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39
  */
 void print_title() {
     printf("SeeTho's Generic CRC Code and LUT Generator\n");
-    printf("(c) T K See Tho 2020-12-27 CC BY-NC-SA\n");
+    printf("(c) T K See Tho 2020-12-27 CC BY-NC-SA 4.0\n");
     printf("Revision %s\n\n", SWVersion);
 }
 
@@ -41,12 +41,12 @@ void print_title() {
 void print_usage(char *progname) {
     print_title();
     printf("Usage: %s -pGPOLY [-iINIT] [-fINFILE | -t | -l | -h]\n\n", progname);
-    printf("-p  <GPOLY>: Generator polynomial (in Koopman notation, max 128 bits).\n");
-    printf("-i   <INIT>: Initial value of CRC register (msb left justified).\n");
-    printf("-f <INFILE>: Input data file (default from stdin).\n");
-    printf("-t Set to run on test string \"123456789\" (0x313233343536373839)\n");
-    printf("-l Set to generate look-up-table\n");
-    printf("-h Print this usage message.\n");
+    printf("    -p  <GPOLY>: Generator polynomial (in Koopman notation, max 128 bits).\n");
+    printf("    -i   <INIT>: Initial value of CRC register (msb left justified).\n");
+    printf("    -f <INFILE>: Input data file (default from stdin).\n");
+    printf("    -t Set to run on test string \"123456789\" (0x313233343536373839).\n");
+    printf("    -l Set to generate look-up-table.\n");
+    printf("    -h Print this usage message.\n");
 }
 
 /*

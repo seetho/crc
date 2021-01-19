@@ -5,8 +5,8 @@
  * tkseetho@gmail.com 
  * GPG public key signature F489 A852 333D 5FBD CF6E  26DF AD5A B2C4 24BC 86B9
  *
- * This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.
- * https://creativecommons.org/licenses/by-nc/4.0/
+ * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+ * https://creativecommons.org/licenses/by-nc-sa/4.0/
  *
  */
 
