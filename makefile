@@ -1,27 +1,25 @@
-CC := /usr/bin/gcc
-CCFLAGS = -Wall -std=gnu11
-DBGFLAGS = -g -O0
-LDFLAGS =
-LDLIBS =
-INCLUDES = 
+PROGNAME = crc
+PROGLIB = crclib
+COMPILER = /usr/bin/gcc
+COMP_FLAGS = -Wall -std=gnu17
+DBG_FLAGS := $(COMP_FLAGS) -g -O0
+DIST_FLAGS := $(COMP_FLAGS) -O3
 
-all: crc
+all: $(PROGNAME)
+debug: $(PROGNAME)
 
-crc: crc.o crclib.o
-	$(CC) $(CCFLAGS) $(DBGFLAGS) $(INCLUDES) $(LDLIBS) $(LDFLAGS) -o crc crc.o crclib.o 
+$(PROGNAME): $(PROGNAME).c $(PROGLIB).o
+	$(COMPILER) $(DBG_FLAGS) -o $@ $^ 
 
-crc.o: crc.c crclib.h
-	$(CC) $(CCFLAGS) $(DBGFLAGS) $(INCLUDES) $(LDLIBS) $(LDFLAGS) -c crc.c
+$(PROGLIB).o: $(PROGLIB).c $(PROGLIB).h
+	$(COMPILER) $(DBG_FLAGS) -o $@ -c $<
 
-crclib.o: crclib.c crclib.h
-	$(CC) $(CCFLAGS) $(DBGFLAGS) $(INCLUDES) $(LDLIBS) $(LDFLAGS) -c crclib.c
+dist: $(PROGNAME).c $(PROGLIB).c $(PROGLIB).h
+	$(COMPILER) $(DIST_FLAGS) -o $(PROGNAME) $(PROGNAME).c $(PROGLIB).c 
 
-dist: crc.c crclib.c crclib.h
-	$(CC) $(CCFLAGS) $(INCLUDES) -O3 $(LDLIBS) $(LDFLAGS) -o crc crc.c crclib.c 
-
-distclean: crc.c crclib.c crclib.h
-	rm crc *.o
-	$(CC) $(CCFLAGS) $(INCLUDES) -O3 $(LDLIBS) $(LDFLAGS) -o crc crc.c crclib.c 
+distclean: $(PROGNAME).c $(PROGLIB).c $(PROGLIB).h
+	rm $(PROGNAME) *.o
+	$(COMPILER)) $(DIST_FLAGS) -o $(PROGNAME) $(PROGNAME).c $(PROGLIB).c 
 
 clean:
-	rm crc *.o
+	rm $(PROGNAME) *.o
