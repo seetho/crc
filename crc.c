@@ -15,6 +15,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <getopt.h>
 
 #include "crclib.h"
 

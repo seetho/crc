@@ -1,7 +1,7 @@
 PROGNAME = crc
 PROGLIB = crclib
 COMPILER = /usr/bin/gcc
-COMP_FLAGS = -Wall -std=gnu17
+COMP_FLAGS = -Wall -std=c17
 DBG_FLAGS := $(COMP_FLAGS) -g -O0
 DIST_FLAGS := $(COMP_FLAGS) -O3
 
