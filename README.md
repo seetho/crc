@@ -25,6 +25,10 @@ Usage
 
 History
 =======
+2021-01-30
+    Generated LUTs for CRC-4/ITU G.704, CRC-5/ITU G.704, CRC-5/USB,
+    CRC-16/CCITT and some small test codes to verify them.
+
 2021-01-18 (r5.5)
     Consolidated stlib.c/stlib.h into crclib.c/crclib.h.
     Tweaked qup_msb, qdn_msb, qup_lsb, qdn_lsb to shift n number of bits.
