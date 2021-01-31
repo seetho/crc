@@ -16,7 +16,7 @@ Usage
     Usage: crc -pGPOLY [-iINIT] [-fINFILE | -t | -l | -h]
 
         -p  <GPOLY>: Generator polynomial (in Koopman notation, max 128 bits).
-        -i   <INIT>: Initial value of CRC register (msb left justified).
+        -i   <INIT>: Initial value of CRC register (high-order bit justified).
         -f <INFILE>: Input data file (default from stdin).
         -t           Set to run on test string "123456789" (0x313233343536373839).
         -l           Set to generate look-up-table.
@@ -25,6 +25,10 @@ Usage
 
 History
 =======
+2021-01-31 (r5.5.1)
+    Tested CRC-15/CAN LUT.
+    Corrected some typos and improved some descriptions.
+
 2021-01-30
     Generated LUTs for CRC-4/ITU G.704, CRC-5/ITU G.704, CRC-5/USB,
     CRC-16/CCITT and some small test codes to verify them.

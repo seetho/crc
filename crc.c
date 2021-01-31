@@ -22,7 +22,7 @@
 #define MAXCRCSTR   ((MAXCRCBYTES * 2) + 3) // input string max length
                                             // cater for odd poly widths and string terminator
 
-const char SWVersion[] = "5.5 (2021-01-18)";
+const char SWVersion[] = "5.5.1 (2021-01-31)";
 
 // The popular (but rather weak) check data for CRC
 const uint8_t TestData[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39};
@@ -43,7 +43,7 @@ void print_usage(char *progname) {
     print_title();
     printf("Usage: %s -pGPOLY [-iINIT] [-fINFILE | -t | -l | -h]\n\n", progname);
     printf("    -p  <GPOLY>: Generator polynomial (in Koopman notation, max 128 bits).\n");
-    printf("    -i   <INIT>: Initial value of CRC register (msb left justified).\n");
+    printf("    -i   <INIT>: Initial value of CRC register (high-order bit justified).\n");
     printf("    -f <INFILE>: Input data file (default from stdin).\n");
     printf("    -t Set to run on test string \"123456789\" (0x313233343536373839).\n");
     printf("    -l Set to generate look-up-table.\n");
@@ -58,13 +58,13 @@ void print_results(CRC_EVAL_TYP *gd) {
 
     printf("Gen. Polynomial Degree:       %d (1 + %d bits)\n", gd->gp_width, gd->gp_width);
     reg2str(str, gd->gp_koopman, gd->reg_width);
-    printf("Gen. Polynomial (Koopman):    0x%s\n", str);
+    printf("Gen. Polynomial (Koopman):    0x%s (without low-order bit)\n", str);
     reg2str(str, gd->gp_normal, gd->reg_width);
-    printf("Gen. Polynomial (Normal):     0x%s\n", str);
+    printf("Gen. Polynomial (Normal):     0x%s (without high-order bit)\n", str);
     reg2str(str, gd->gp_msb, gd->reg_width);
-    printf("Gen. Polynomial (Direct msb): 0x%s\n", str);
+    printf("Gen. Polynomial (Direct msb): 0x%s (without high-order bit)\n", str);
     reg2str(str, gd->gp_lsb, gd->reg_width);
-    printf("Gen. Polynomial (Direct lsb): 0x%s\n", str);
+    printf("Gen. Polynomial (Direct lsb): 0x%s (without high-order bit)\n", str);
     reg2str(str, gd->init, gd->reg_width);
     printf("Initial CRC Register Value:   0x%s\n", str);
     reg2str(str, gd->dir_init, gd->reg_width);
@@ -72,7 +72,7 @@ void print_results(CRC_EVAL_TYP *gd) {
     reg2str(str, gd->aug_init, gd->reg_width);
     printf("Equivalent Aug'd Init Value:  0x%s\n", str);
     reg2str(str, gd->crc_msb, gd->reg_width);
-    printf("CRC (Direct msb-st data):     0x%s\n", str);
+    printf("CRC (Direct msb-1st data):     0x%s\n", str);
     reg2str(str, gd->crc_lsb, gd->reg_width);
     printf("CRC (Direct lsb-1st data):    0x%s\n", str);
 }
