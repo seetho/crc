@@ -13,18 +13,33 @@ https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 Usage
 =====
-    Usage: crc -pGPOLY [-iINIT] [-fINFILE | -t | -l | -h]
+    Usage: crc -pGPOLY [-iINIT] [-fINFILE | -t | -l | -L | -h]
 
         -p  <GPOLY>: Generator polynomial (in Koopman notation, max 128 bits).
         -i   <INIT>: Initial value of CRC register (high-order bit justified).
         -f <INFILE>: Input data file (default from stdin).
         -t           Set to run on test string "123456789" (0x313233343536373839).
-        -l           Set to generate look-up-table.
+        -l           Set to generate 16-element Look-Up-Table.
+        -L           Set to generate 256-element Look-Up-Table.
         -h           Print this usage message.
 
 
 History
 =======
+2021-02-02 (r6.1.0)
+    LUT values formatted as an array of array of bytes; i.e. uint8_t lut[][] {...
+    Programs using the LUT will only have to include the file and use the arrays lut_msb or lut_lsb.
+    This makes the use of LUT easier, especially the 16-element lsb LUT where the nibbles have to be processed in reversed order.
+    Re-coding all the LUT test programs to make it more generic; so only minor modifications is required to adapt it to different LUTs.
+    There are 2 flavours: one for 16-element LUTs and another for 256-element LUTs. These can be further optimised if needed.
+    
+2021-02-01 (r6.0.0)
+    Updated 256 element LUT output filename to reflect Koopman style polynomial naming.
+    Change option switch from -l to -L to generate 256 element LUT.
+    Use -l option to generate 16-element LUT. Added process_nibble_msb() and process_nibble_lsb() functions to crclib.c.
+    Moved LUTs and test programs into the ../test subdirectory.
+    Updated usage message.
+
 2021-01-31 (r5.5.1)
     Tested CRC-15/CAN LUT.
     Corrected some typos and improved some descriptions.

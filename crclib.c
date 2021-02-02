@@ -171,6 +171,20 @@ void qdn_lsb(uint8_t *reg, uint8_t size, uint8_t n) {
 }
 
 /*
+ * Process high-nibble of data byte msb first.
+ * Check each data bit; if 1 then shift data and XOR with polynomial.
+ */
+void process_nibble_msb(uint8_t *crc, uint8_t *gp, uint8_t size) {
+    for (int i = 0; i < 4; i++) {
+        if (crc[0] & 0x80) {    // shift up and do xor
+            qup_msb(crc, size, 1);
+            xor_reg(crc, gp, size);
+        } else                  // just shift up
+            qup_msb(crc, size, 1);
+    }
+}
+
+/*
  * Process data byte msb first.
  * Check each data bit; if 1 then shift data and XOR with polynomial.
  */
@@ -181,6 +195,20 @@ void process_byte_msb(uint8_t *crc, uint8_t *gp, uint8_t size) {
             xor_reg(crc, gp, size);
         } else                  // just shift up
             qup_msb(crc, size, 1);
+    }
+}
+
+/*
+ * Process low-nibble of data byte lsb first.
+ * Check each data bit; if 1 then shift data and XOR with polynomial.
+ */
+void process_nibble_lsb(uint8_t *crc, uint8_t *gp, uint8_t size) {
+    for (int i = 0; i < 4; i++) {
+        if (crc[0] & 0x01) {    // shift up and do xor
+            qup_lsb(crc, size, 1);
+            xor_reg(crc, gp, size);
+        } else                  // just shift up
+            qup_lsb(crc, size, 1);
     }
 }
 

@@ -152,9 +152,27 @@ Shift lsb-first register down 1 bit
     n : number of bits to shift
 */
 
+void process_nibble_msb(uint8_t *crc, uint8_t *gp, uint8_t size);
+/*
+Process high-nibble of data byte msb first.
+Check each data bit; if 1 then shift data and XOR with polynomial.
+    *crc: crc register array
+    *gp: generator polynomial array
+    size: size of crc/polynomial array
+*/
+
 void process_byte_msb(uint8_t *crc, uint8_t *gp, uint8_t size);
 /*
 Process data byte msb first.
+Check each data bit; if 1 then shift data and XOR with polynomial.
+    *crc: crc register array
+    *gp: generator polynomial array
+    size: size of crc/polynomial array
+*/
+
+void process_nibble_lsb(uint8_t *crc, uint8_t *gp, uint8_t size);
+/*
+Process low-nibble of data byte lsb first.
 Check each data bit; if 1 then shift data and XOR with polynomial.
     *crc: crc register array
     *gp: generator polynomial array
