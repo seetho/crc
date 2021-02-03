@@ -22,7 +22,7 @@
 #define MAXCRCSTR   ((MAXCRCBYTES * 2) + 3) // input string max length
                                             // cater for odd poly widths and string terminator
 
-const char SWVersion[] = "6.1.0 (2021-02-02)";
+const char SWVersion[] = "6.1.1";
 
 // The popular (but rather weak) check data for CRC
 const uint8_t TestData[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39};
@@ -33,7 +33,7 @@ const uint8_t TestData[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39
 void print_title() {
     printf("SeeTho's Generic CRC Code and LUT Generator\n");
     printf("(c) T K See Tho 2020-12-27 CC BY-NC-SA 4.0\n");
-    printf("Revision %s\n\n", SWVersion);
+    printf("Revision %s (%s %s)\n", SWVersion, __DATE__, __TIME__);
 }
 
 /*
@@ -41,7 +41,7 @@ void print_title() {
  */
 void print_usage(char *progname) {
     print_title();
-    printf("Usage: %s -pGPOLY [-iINIT] [-fINFILE | -t | -l | -L | -h]\n\n", progname);
+    printf("Usage: %s -pGPOLY [-iINIT] [-fINFILE | -t | -l | -L | -h]\n", progname);
     printf("    -p  <GPOLY>: Generator polynomial (in Koopman notation, max 128 bits).\n");
     printf("    -i   <INIT>: Initial value of CRC register (high-order bit justified).\n");
     printf("    -f <INFILE>: Input data file (default from stdin).\n");
@@ -97,7 +97,7 @@ bool generate_lut16(CRC_EVAL_TYP *gd) {
         return false;
     }
     fprintf(fp, "// 16-element msb-1st LUT for generator polynomial 0x%s\n", str);
-    fprintf(fp, "uint8_t lut_msb[][%d] = {\n    ", gd->reg_width);
+    fprintf(fp, "uint8_t lut16_msb[][%d] = {\n    ", gd->reg_width);
     for (int data = 0; data < 16; data++) {
         clear_reg(gd->crc_msb, gd->reg_width);
         gd->crc_msb[0] = (((uint8_t)data << 4) & 0xF0);
@@ -135,7 +135,7 @@ bool generate_lut16(CRC_EVAL_TYP *gd) {
     }
     cnt = 0;
     fprintf(fp, "// 16-element lsb-1st LUT for generator polynomial 0x%s\n", str);
-    fprintf(fp, "uint8_t lut_lsb[][%d] = {\n    ", gd->reg_width);
+    fprintf(fp, "uint8_t lut16_lsb[][%d] = {\n    ", gd->reg_width);
     for (int data = 0; data < 16; data++) {
         clear_reg(gd->crc_lsb, gd->reg_width);
         gd->crc_lsb[0] = (uint8_t)data;
@@ -185,7 +185,7 @@ bool generate_lut256(CRC_EVAL_TYP *gd) {
         return false;
     }
     fprintf(fp, "// 256-element msb-1st LUT for generator polynomial 0x%s\n", str);
-    fprintf(fp, "uint8_t lut_msb[][%d] = {\n    ", gd->reg_width);
+    fprintf(fp, "uint8_t lut256_msb[][%d] = {\n    ", gd->reg_width);
     for (int data = 0; data < 256; data++) {
         clear_reg(gd->crc_msb, gd->reg_width);
         gd->crc_msb[0] = (uint8_t)data;
@@ -223,7 +223,7 @@ bool generate_lut256(CRC_EVAL_TYP *gd) {
     }
     cnt = 0;
     fprintf(fp, "// 256-element lsb-1st LUT for generator polynomial 0x%s\n", str);
-    fprintf(fp, "uint8_t lut_lsb[][%d] = {\n    ", gd->reg_width);
+    fprintf(fp, "uint8_t lut256_lsb[][%d] = {\n    ", gd->reg_width);
     for (int data = 0; data < 256; data++) {
         clear_reg(gd->crc_lsb, gd->reg_width);
         gd->crc_lsb[0] = (uint8_t)data;

@@ -1,32 +1,22 @@
-PROGS_16 = test16_09 test16_62CC test16_8810 test16_82608EDB
-PROGS_256 = test256_09 test256_62CC test256_8810 test256_82608EDB
+PROGS = crc4 crc15 crc16 crc32
 COMPILER = /usr/bin/gcc
 COMP_FLAGS = -Wall -std=c17
 DBG_FLAGS := $(COMP_FLAGS) -g -O0
 DIST_FLAGS := $(COMP_FLAGS) -O3
 
-all: $(PROGS_16) $(PROGS_256)
+all: $(PROGS)
 
-test16_09: test16_09.c
-	$(COMPILER) $(DIST_FLAGS) -o $@ $< 
-test256_09: test256_09.c
-	$(COMPILER) $(DIST_FLAGS) -o $@ $< 
+crc4: 
+	$(COMPILER) $(DBG_FLAGS) -D __CRC4__ -o $@ testcrc.c 
 
-test16_62CC: test16_62CC.c
-	$(COMPILER) $(DIST_FLAGS) -o $@ $< 
-test256_62CC: test256_62CC.c
-	$(COMPILER) $(DIST_FLAGS) -o $@ $< 
+crc15: 
+	$(COMPILER) $(DBG_FLAGS) -D __CRC15__ -o $@ testcrc.c 
 
-test16_8810: test16_8810.c
-	$(COMPILER) $(DIST_FLAGS) -o $@ $< 
-test256_8810: test256_8810.c
-	$(COMPILER) $(DIST_FLAGS) -o $@ $< 
+crc16: 
+	$(COMPILER) $(DBG_FLAGS) -D __CRC16__ -o $@ testcrc.c 
 
-test16_82608EDB: test16_82608EDB.c
-	$(COMPILER) $(DIST_FLAGS) -o $@ $< 
-test256_82608EDB: test256_82608EDB.c
-	$(COMPILER) $(DIST_FLAGS) -o $@ $< 
+crc32: 
+	$(COMPILER) $(DBG_FLAGS) -D __CRC32__ -o $@ testcrc.c 
 
 clean:
-	rm $(PROGS_16)
-	rm $(PROGS_256)
+	rm $(PROGS)
