@@ -22,7 +22,7 @@
 #define MAXCRCSTR   ((MAXCRCBYTES * 2) + 3) // input string max length
                                             // cater for odd poly widths and string terminator
 
-const char SWVersion[] = "6.1.1";
+const char SWVersion[] = "6.1.2";
 
 // The popular (but rather weak) check data for CRC
 const uint8_t TestData[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39};

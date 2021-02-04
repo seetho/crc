@@ -132,7 +132,7 @@ void revbyte_reg(uint8_t *reg, uint8_t size) {
 void qup_msb(uint8_t *reg, uint8_t size, uint8_t n) {
     while (n-- > 0) {
         for (int i = 0; i < size-1; i++)
-            reg[i] = (reg[i] << 1) | ((reg[i+1] & 0x80)? 0x01: 0x00);
+            reg[i] = (reg[i] << 1) | (reg[i+1] >> 7);
         reg[size-1] <<= 1;
     }
 }
@@ -143,7 +143,7 @@ void qup_msb(uint8_t *reg, uint8_t size, uint8_t n) {
 void qdn_msb(uint8_t *reg, uint8_t size, uint8_t n) {
     while (n-- > 0) {
         for (int i = size-1; i > 0; i--)
-            reg[i] = (reg[i] >> 1) | ((reg[i-1] & 0x01)? 0x80: 0x00);
+            reg[i] = (reg[i] >> 1) | (reg[i-1] << 7);
         reg[0] >>= 1;
     }
 }
@@ -154,7 +154,7 @@ void qdn_msb(uint8_t *reg, uint8_t size, uint8_t n) {
 void qup_lsb(uint8_t *reg, uint8_t size, uint8_t n) {
     while (n-- > 0) {
         for (int i = 0; i < size-1; i++) 
-            reg[i] = (reg[i] >> 1) | ((reg[i+1] & 0x01)? 0x80: 0x00);
+            reg[i] = (reg[i] >> 1) | (reg[i+1] << 7);
         reg[size-1] >>= 1;
     }
 }
@@ -165,7 +165,7 @@ void qup_lsb(uint8_t *reg, uint8_t size, uint8_t n) {
 void qdn_lsb(uint8_t *reg, uint8_t size, uint8_t n) {
     while (n-- > 0) {
         for (int i = size-1; i > 0; i--) 
-            reg[i] = (reg[i] << 1) | ((reg[i-1] & 0x80)? 0x01: 0x00);
+            reg[i] = (reg[i] << 1) | (reg[i-1] >> 7);
         reg[0] <<= 1;
     }
 }

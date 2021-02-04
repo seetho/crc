@@ -26,6 +26,9 @@ Usage
 
 History
 =======
+2021-02-04
+    Modified code of register bit shifting functions in crclib.c to be more readable.
+
 2021-02-03
     Removed __ from some directive identifiers in test program. Shouldn't begin any identifiers with underscore.
 
