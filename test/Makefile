@@ -7,16 +7,16 @@ DIST_FLAGS := $(COMP_FLAGS) -O3
 all: $(PROGS)
 
 crc4: 
-	$(COMPILER) $(DBG_FLAGS) -D __CRC4__ -o $@ testcrc.c 
+	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC4 -o $@ testcrc.c 
 
 crc15: 
-	$(COMPILER) $(DBG_FLAGS) -D __CRC15__ -o $@ testcrc.c 
+	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC15 -o $@ testcrc.c 
 
 crc16: 
-	$(COMPILER) $(DBG_FLAGS) -D __CRC16__ -o $@ testcrc.c 
+	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC16 -o $@ testcrc.c 
 
 crc32: 
-	$(COMPILER) $(DBG_FLAGS) -D __CRC32__ -o $@ testcrc.c 
+	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC32 -o $@ testcrc.c 
 
 clean:
 	rm $(PROGS)

@@ -26,6 +26,9 @@ Usage
 
 History
 =======
+2021-02-03
+    Removed __ from some directive identifiers in test program. Shouldn't begin any identifiers with underscore.
+
 2021-02-02 (r6.1.0)
     LUT values formatted as an array of array of bytes; i.e. uint8_t lut[][] {...
     Programs using the LUT will only have to include the file and use the arrays lut_msb or lut_lsb.

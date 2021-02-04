@@ -2,31 +2,31 @@
 #include <stdint.h>
 
 // Select one of the following to compile for
-//#define __CRC4__
-//#define __CRC15__
-//#define __CRC16__
-//#define __CRC32__
-// ...or pass it from gcc with the -D option; e.g. -D __CRC32__
+//#define COMP_CRC4
+//#define COMP_CRC15
+//#define COMP_CRC16
+//#define COMP_CRC32
+// ...or pass it from gcc with the -D option; e.g. -D COMP_CRC32
 
-#if defined (__CRC4__)
+#if defined COMP_CRC4
 #define CRC_SIZE    1
 #define CRC_TYPE    CRC4
 #define KPOLY       0x09
 #define GPOLY       0x13
 
-#elif defined (__CRC15__)
+#elif defined COMP_CRC15
 #define CRC_SIZE    2
 #define CRC_TYPE    CRC15
 #define KPOLY       0x62CC
 #define GPOLY       0xC599
 
-#elif defined (__CRC16__)
+#elif defined COMP_CRC16
 #define CRC_SIZE    2
 #define CRC_TYPE    CRC16
 #define KPOLY       0x8810
 #define GPOLY       0x11021
 
-#elif defined (__CRC32__)
+#elif defined COMP_CRC32
 #define CRC_SIZE    4
 #define CRC_TYPE    CRC32
 #define KPOLY       0x82608EDB
