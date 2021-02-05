@@ -10,39 +10,39 @@
 
 #if defined COMP_CRC4
 #define CRC_SIZE    1
-#define CRC_TYPE    CRC4
+#define CRC_TYPE    CRC-4
 #define KPOLY       0x09
 #define GPOLY       0x13
 
 #elif defined COMP_CRC15
 #define CRC_SIZE    2
-#define CRC_TYPE    CRC15
+#define CRC_TYPE    CRC-15
 #define KPOLY       0x62CC
 #define GPOLY       0xC599
 
 #elif defined COMP_CRC16
 #define CRC_SIZE    2
-#define CRC_TYPE    CRC16
+#define CRC_TYPE    CRC-16
 #define KPOLY       0x8810
 #define GPOLY       0x11021
 
 #elif defined COMP_CRC32
 #define CRC_SIZE    4
-#define CRC_TYPE    CRC32
+#define CRC_TYPE    CRC-32
 #define KPOLY       0x82608EDB
 #define GPOLY       0x104C11DB7
 #endif
 
-#define STR_(s)         #s
-#define STR(s)          STR_(s)
-#define NAME_(n,p,r)    n ## _ ## p ## r
-#define NAME(n,p,r)     NAME_(n, p, r)
-#define TEST_SIZE       9
+#define STR_(s)     #s
+#define STR(s)      STR_(s)
+#define NAME_(p,r)  p ## r
+#define NAME(p,r)   NAME_(p, r)
+#define TEST_SIZE   9
 
-#include STR(NAME(CRC_TYPE, KPOLY, _16_msb.lut))
-#include STR(NAME(CRC_TYPE, KPOLY, _16_lsb.lut))
-#include STR(NAME(CRC_TYPE, KPOLY, _256_msb.lut))
-#include STR(NAME(CRC_TYPE, KPOLY, _256_lsb.lut))
+#include STR(NAME(KPOLY, _16_msb.h))
+#include STR(NAME(KPOLY, _16_lsb.h))
+#include STR(NAME(KPOLY, _256_msb.h))
+#include STR(NAME(KPOLY, _256_lsb.h))
 
 
 const uint8_t TestData[TEST_SIZE] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39};

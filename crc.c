@@ -22,7 +22,7 @@
 #define MAXCRCSTR   ((MAXCRCBYTES * 2) + 3) // input string max length
                                             // cater for odd poly widths and string terminator
 
-const char SWVersion[] = "6.1.2";
+const char SWVersion[] = "6.2.0";
 
 // The popular (but rather weak) check data for CRC
 const uint8_t TestData[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39};
@@ -46,7 +46,7 @@ void print_usage(char *progname) {
     printf("    -i   <INIT>: Initial value of CRC register (high-order bit justified).\n");
     printf("    -f <INFILE>: Input data file (default from stdin).\n");
     printf("    -t           Set to run on test string \"123456789\" (0x313233343536373839).\n");
-    printf("    -l           Set to generate 16-element Loo-Up-Table.\n");
+    printf("    -l           Set to generate 16-element Look-Up-Table.\n");
     printf("    -L           Set to generate 256-element Look-Up-Table.\n");
     printf("    -h           Print this usage message.\n");
 }
@@ -80,89 +80,112 @@ void print_results(CRC_EVAL_TYP *gd) {
 
 /*
  * Generate 16-element LUT for the given polynomial.
- * Both msb and lsb tables.
+ * Both msb and lsb tables;
+ * as array of bytes in a header file, and
+ * as binary data file
  */
 bool generate_lut16(CRC_EVAL_TYP *gd) {
-    FILE *fp;               // output file ptr
-    char fname[256] = "";   // filename to write to
+    FILE *fhp;              // output header file ptr
+    FILE *fdp;              // output data binary file ptr
+    char fhname[48] = "";   // name of header file to write to
+    char fdname[48] = "";   // name of binary data file to write to
     char str[(MAXCRCBYTES*2)+1] = ""; // make a temp string with enough space
     int cnt = 0;
     int i = 0;
 
     // msb-1st lut
     reg2str(str, gd->gp_koopman, gd->reg_width);
-    sprintf(fname, "CRC%d_0x%s_16_msb.lut", gd->gp_width, str);
-    if (NULL == (fp = fopen(fname, "w"))) {
-        printf("Output file error: %s\n", fname);
+    //sprintf(fname, "CRC%d_0x%s_16_msb.lut", gd->gp_width, str);
+    sprintf(fhname, "0x%s_16_msb.h", str);
+    if (NULL == (fhp = fopen(fhname, "w"))) {
+        printf("Output file error: %s\n", fhname);
         return false;
     }
-    fprintf(fp, "// 16-element msb-1st LUT for generator polynomial 0x%s\n", str);
-    fprintf(fp, "uint8_t lut16_msb[][%d] = {\n    ", gd->reg_width);
+    sprintf(fdname, "0x%s_16_msb.lut", str);
+    if (NULL == (fdp = fopen(fdname, "wb"))) {
+        printf("Output file error: %s\n", fdname);
+        return false;
+    }
+    fprintf(fhp, "// 16-element msb-1st LUT for generator polynomial 0x%s\n", str);
+    fprintf(fhp, "uint8_t lut16_msb[][%d] = {\n    ", gd->reg_width);
     for (int data = 0; data < 16; data++) {
         clear_reg(gd->crc_msb, gd->reg_width);
         gd->crc_msb[0] = (((uint8_t)data << 4) & 0xF0);
         process_nibble_msb(gd->crc_msb, gd->gp_msb, gd->reg_width);
+        fwrite(gd->crc_msb, gd->reg_width, 1, fdp);     // write to binary data file
         // format the LUT value as array of individual bytes
         // even if it's just 1 byte (there's no speed or space penalty)
-        fprintf(fp, "{");
+        fprintf(fhp, "{");
         i = 0;
         while (i < gd->reg_width) {
-            fprintf(fp, "0x%02X", gd->crc_msb[i]);
+            fprintf(fhp, "0x%02X", gd->crc_msb[i]);
             i++;
             if (i < gd->reg_width)
-                fprintf(fp, ",");
+                fprintf(fhp, ",");
         }
-        fprintf(fp, "}");
+        fprintf(fhp, "}");
         if (7 == cnt) {
             if (15 != data)
-                fprintf(fp, ",\n    ");
+                fprintf(fhp, ",\n    ");
             cnt = 0;
         } else {
-            fprintf(fp, ",");
+            fprintf(fhp, ",");
             cnt++;
         }
     }
-    fprintf(fp, "\n};\n");
-    fclose(fp);
-    printf("Look-up-table (msb-1st) generated to file %s\n", fname);
+    fprintf(fhp, "\n};\n");
+    fclose(fhp);
+    fclose(fdp);
+    printf("Look-up-table (msb-1st) header file: %s\n", fhname);
+    printf("Look-up-table (msb-1st) binary data: %s\n", fdname);
 
     // lsb-1st lut
     reg2str(str, gd->gp_koopman, gd->reg_width);
-    sprintf(fname, "CRC%d_0x%s_16_lsb.lut", gd->gp_width, str);
-    if (NULL == (fp = fopen(fname, "w"))) {
-        printf("Output file error: %s\n", fname);
+    //sprintf(fname, "CRC%d_0x%s_16_lsb.lut", gd->gp_width, str);
+    sprintf(fhname, "0x%s_16_lsb.h", str);
+    if (NULL == (fhp = fopen(fhname, "w"))) {
+        printf("Output file error: %s\n", fhname);
+        return false;
+    }
+    sprintf(fdname, "0x%s_16_lsb.lut", str);
+    if (NULL == (fdp = fopen(fdname, "wb"))) {
+        printf("Output file error: %s\n", fdname);
         return false;
     }
     cnt = 0;
-    fprintf(fp, "// 16-element lsb-1st LUT for generator polynomial 0x%s\n", str);
-    fprintf(fp, "uint8_t lut16_lsb[][%d] = {\n    ", gd->reg_width);
+    fprintf(fhp, "// 16-element lsb-1st LUT for generator polynomial 0x%s\n", str);
+    fprintf(fhp, "uint8_t lut16_lsb[][%d] = {\n    ", gd->reg_width);
     for (int data = 0; data < 16; data++) {
         clear_reg(gd->crc_lsb, gd->reg_width);
         gd->crc_lsb[0] = (uint8_t)data;
         process_nibble_lsb(gd->crc_lsb, gd->gp_lsb, gd->reg_width);
+        fwrite(gd->crc_lsb, gd->reg_width, 1, fdp);     // write to binary data file
         // format the LUT value as array of individual bytes
         // even if it's just 1 byte (there's no speed or space penalty)
-        fprintf(fp, "{");
+        fprintf(fhp, "{");
         i = 0;
         while (i < gd->reg_width) {
-            fprintf(fp, "0x%02X", gd->crc_lsb[i]);
+            fprintf(fhp, "0x%02X", gd->crc_lsb[i]);
             i++;
             if (i < gd->reg_width)
-                fprintf(fp, ",");
+                fprintf(fhp, ",");
         }
-        fprintf(fp, "}");
+        fprintf(fhp, "}");
         if (7 == cnt) {
             if (15 != data)
-                fprintf(fp, ",\n    ");
+                fprintf(fhp, ",\n    ");
             cnt = 0;
         } else {
-            fprintf(fp, ",");
+            fprintf(fhp, ",");
             cnt++;
         }
     }
-    fprintf(fp, "\n};\n");
-    fclose(fp);
-    printf("Look-up-table (lsb-1st) generated to file %s\n", fname);
+    fprintf(fhp, "\n};\n");
+    fclose(fhp);
+    fclose(fdp);
+    printf("Look-up-table (lsb-1st) header file: %s\n", fhname);
+    printf("Look-up-table (lsb-1st) binary data: %s\n", fdname);
+
     return true;
 }
 
@@ -171,86 +194,107 @@ bool generate_lut16(CRC_EVAL_TYP *gd) {
  * Both msb and lsb tables.
  */
 bool generate_lut256(CRC_EVAL_TYP *gd) {
-    FILE *fp;               // output file ptr
-    char fname[256] = "";   // filename to write to
+    FILE *fhp;              // output header file ptr
+    FILE *fdp;              // output data binary file ptr
+    char fhname[48] = "";   // name of header file to write to
+    char fdname[48] = "";   // name of binary data file to write to
     char str[(MAXCRCBYTES*2)+1] = ""; // make a temp string with enough space
     int cnt = 0;
     int i = 0;
 
     // msb-1st lut
     reg2str(str, gd->gp_koopman, gd->reg_width);
-    sprintf(fname, "CRC%d_0x%s_256_msb.lut", gd->gp_width, str);
-    if (NULL == (fp = fopen(fname, "w"))) {
-        printf("Output file error: %s\n", fname);
+    //sprintf(fhname, "CRC%d_0x%s_256_msb.lut", gd->gp_width, str);
+    sprintf(fhname, "0x%s_256_msb.h", str);
+    if (NULL == (fhp = fopen(fhname, "w"))) {
+        printf("Output file error: %s\n", fhname);
         return false;
     }
-    fprintf(fp, "// 256-element msb-1st LUT for generator polynomial 0x%s\n", str);
-    fprintf(fp, "uint8_t lut256_msb[][%d] = {\n    ", gd->reg_width);
+    sprintf(fdname, "0x%s_256_msb.lut", str);
+    if (NULL == (fdp = fopen(fdname, "wb"))) {
+        printf("Output file error: %s\n", fdname);
+        return false;
+    }
+    fprintf(fhp, "// 256-element msb-1st LUT for generator polynomial 0x%s\n", str);
+    fprintf(fhp, "uint8_t lut256_msb[][%d] = {\n    ", gd->reg_width);
     for (int data = 0; data < 256; data++) {
         clear_reg(gd->crc_msb, gd->reg_width);
         gd->crc_msb[0] = (uint8_t)data;
         process_byte_msb(gd->crc_msb, gd->gp_msb, gd->reg_width);
+        fwrite(gd->crc_msb, gd->reg_width, 1, fdp);     // write to binary data file
         // format the LUT value as array of individual bytes
         // even if it's just 1 byte (there's no speed or space penalty)
-        fprintf(fp, "{");
+        fprintf(fhp, "{");
         i = 0;
         while (i < gd->reg_width) {
-            fprintf(fp, "0x%02X", gd->crc_msb[i]);
+            fprintf(fhp, "0x%02X", gd->crc_msb[i]);
             i++;
             if (i < gd->reg_width)
-                fprintf(fp, ",");
+                fprintf(fhp, ",");
         }
-        fprintf(fp, "}");
+        fprintf(fhp, "}");
         if (7 == cnt) { // 8 LUT values per output line
             if (255 != data)
-                fprintf(fp, ",\n    ");
+                fprintf(fhp, ",\n    ");
             cnt = 0;
         } else {
-                fprintf(fp, ",");
+                fprintf(fhp, ",");
             cnt++;
         }
     }
-    fprintf(fp, "\n};\n");
-    fclose(fp);
-    printf("Look-up-table (msb-1st) generated to file %s\n", fname);
+    fprintf(fhp, "\n};\n");
+    fclose(fhp);
+    fclose(fdp);
+    printf("Look-up-table (msb-1st) header file: %s\n", fhname);
+    printf("Look-up-table (msb-1st) binary data: %s\n", fdname);
 
     // lsb-1st lut
     reg2str(str, gd->gp_koopman, gd->reg_width);
-    sprintf(fname, "CRC%d_0x%s_256_lsb.lut", gd->gp_width, str);
-    if (NULL == (fp = fopen(fname, "w"))) {
-        printf("Output file error: %s\n", fname);
+    //sprintf(fhname, "CRC%d_0x%s_256_lsb.lut", gd->gp_width, str);
+    sprintf(fhname, "0x%s_256_lsb.h", str);
+    if (NULL == (fhp = fopen(fhname, "w"))) {
+        printf("Output file error: %s\n", fhname);
+        return false;
+    }
+    sprintf(fdname, "0x%s_256_lsb.lut", str);
+    if (NULL == (fdp = fopen(fdname, "wb"))) {
+        printf("Output file error: %s\n", fdname);
         return false;
     }
     cnt = 0;
-    fprintf(fp, "// 256-element lsb-1st LUT for generator polynomial 0x%s\n", str);
-    fprintf(fp, "uint8_t lut256_lsb[][%d] = {\n    ", gd->reg_width);
+    fprintf(fhp, "// 256-element lsb-1st LUT for generator polynomial 0x%s\n", str);
+    fprintf(fhp, "uint8_t lut256_lsb[][%d] = {\n    ", gd->reg_width);
     for (int data = 0; data < 256; data++) {
         clear_reg(gd->crc_lsb, gd->reg_width);
         gd->crc_lsb[0] = (uint8_t)data;
         process_byte_lsb(gd->crc_lsb, gd->gp_lsb, gd->reg_width);
+        fwrite(gd->crc_lsb, gd->reg_width, 1, fdp);     // write to binary data file
         // format the LUT value as array of individual bytes
         // even if it's just 1 byte (there's no speed or space penalty)
-        fprintf(fp, "{");
+        fprintf(fhp, "{");
         i = 0;
         while (i < gd->reg_width) {
-            fprintf(fp, "0x%02X", gd->crc_lsb[i]);
+            fprintf(fhp, "0x%02X", gd->crc_lsb[i]);
             i++;
             if (i < gd->reg_width)
-                fprintf(fp, ",");
+                fprintf(fhp, ",");
         }
-        fprintf(fp, "}");
+        fprintf(fhp, "}");
         if (7 == cnt) {
             if (255 != data)
-                fprintf(fp, ",\n    ");
+                fprintf(fhp, ",\n    ");
             cnt = 0;
         } else {
-            fprintf(fp, ",");
+            fprintf(fhp, ",");
             cnt++;
         }
     }
-    fprintf(fp, "\n};\n");
-    fclose(fp);
-    printf("Look-up-table (lsb-1st) generated to file %s\n", fname);
+    fprintf(fhp, "\n};\n");
+    fclose(fhp);
+    fclose(fdp);
+    printf("Look-up-table (lsb-1st) header file: %s\n", fhname);
+    printf("Look-up-table (lsb-1st) binary data: %s\n", fdname);
+
     return true;
 }
 

@@ -26,7 +26,11 @@ Usage
 
 History
 =======
-2021-02-04
+2021-02-06 (6.2.0)
+    Change LUT data array declaration as a header file (with .h extension).
+    Also output LUT as binary data file (with .lut extension). This will be useful for programs that use it's own data structure format for the LUT.
+
+2021-02-04 (r6.1.1)
     Modified code of register bit shifting functions in crclib.c to be more readable.
 
 2021-02-03
