@@ -66,30 +66,18 @@ void lut256_test(uint8_t *crc, const uint8_t lut[][CRC_SIZE]) {
 void lut16_msb_test(uint8_t *crc, const uint8_t lut[][CRC_SIZE]) {
     uint8_t idx = 0;
 
-    for (int i = 0; i < CRC_SIZE; i++)
+    for (int i = 0; i < CRC_SIZE; i++)      // zero the CRC register first
         crc[i] = 0x00;
-    for (int i = 0; i < TEST_SIZE; i++) {
+
+    for (int i = 0; i < TEST_SIZE; i++) {   // run through all the test data
         crc[0] ^= TestData[i];
-        idx = crc[0] >> 4;      // high-nibble is LUT index
-        if (CRC_SIZE > 1) {     // if multibyte crc
-            crc[0] <<= 4;       // shift everything 1 nibble left
-            for (int j = 1; j < CRC_SIZE; j++) {
-                crc[j-1] |= crc[j] >> 4;
-                crc[j] <<= 4;
+        for (int j = 0; j < 2; j++) {       // look up twice; once for each nibble
+            idx = crc[0] >> 4;
+            for (int k = 0; k < CRC_SIZE; k++) {
+                crc[k] = (crc[k]<<4) ^ lut[idx][k];
+                if ((k+1) < CRC_SIZE)
+                    crc[k] ^= crc[k+1]>>4;
             }
-            for (int k = 0; k < CRC_SIZE; k++)
-                crc[k] ^= lut[idx][k];
-            idx = crc[0] >> 4;  // previous low-nibble index to LUT 
-            crc[0] <<= 4;       // shift everything 1 nibble left
-            for (int j = 1; j < CRC_SIZE; j++) {
-                crc[j-1] |= crc[j] >> 4;
-                crc[j] <<= 4;
-            }
-            for (int k = 0; k < CRC_SIZE; k++)
-                crc[k] ^= lut[idx][k];
-        } else {    // single byte crc
-            crc[0] = (crc[0] << 4) ^ lut[idx][0];   // first look up
-            crc[0] = lut[crc[0] >> 4][0];           // 2nd look up
         }
     }
 }
@@ -97,30 +85,18 @@ void lut16_msb_test(uint8_t *crc, const uint8_t lut[][CRC_SIZE]) {
 void lut16_lsb_test(uint8_t *crc, const uint8_t lut[][CRC_SIZE]) {
     uint8_t idx = 0;
 
-    for (int i = 0; i < CRC_SIZE; i++)
+    for (int i = 0; i < CRC_SIZE; i++)      // zero the CRC register first
         crc[i] = 0x00;
-    for (int i = 0; i < TEST_SIZE; i++) {
+
+    for (int i = 0; i < TEST_SIZE; i++) {   // run through all the test data
         crc[0] ^= TestData[i];
-        idx = crc[0] & 0x0F;    // low-nibble is LUT index
-        if (CRC_SIZE > 1) {     // multi-byte crc
-            crc[0] >>= 4;       // shift everything 1 nibble left (low nibble first)
-            for (int j = 1; j < CRC_SIZE; j++) {
-                crc[j-1] |= crc[j] << 4;
-                crc[j] >>= 4;
+        for (int j = 0; j < 2; j++) {       // look up twice; once for each nibble
+            idx = crc[0] & 0x0F;
+            for (int k = 0; k < CRC_SIZE; k++) {
+                crc[k] = (crc[k]>>4) ^ lut[idx][k];
+                if ((k+1) < CRC_SIZE)
+                    crc[k] ^= crc[k+1]<<4;
             }
-            for (int k = 0; k < CRC_SIZE; k++)
-                crc[k] ^= lut[idx][k];
-            idx = crc[0] & 0x0F;    // previous high-nibble index to LUT
-            crc[0] >>= 4;           // shift everything 1 nibble left (low nibble first)
-            for (int j = 1; j < CRC_SIZE; j++) {
-                crc[j-1] |= crc[j] << 4;
-                crc[j] >>= 4;
-            }
-            for (int k = 0; k < CRC_SIZE; k++)
-                crc[k] ^= lut[idx][k];
-        } else {    // single byte crc
-            crc[0] = (crc[0] >> 4) ^ lut[idx][0];   // first look up
-            crc[0] = lut[crc[0] & 0x0F][0];         // 2nd look up
         }
     }
 }
