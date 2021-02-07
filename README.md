@@ -26,6 +26,12 @@ Usage
 
 History
 =======
+2021-02-07
+    Improved the crc functions in testcrc.c for efficiency and elegance.
+    Added crcl256.c program to test 256-element LUT binary data files.
+    Added crcl16msb.c and crcl16lsb.c to test 16-element LUT binary data files.
+    Modified test Makefile.
+    
 2021-02-06 (6.2.0)
     Change LUT data array declaration as a header file (with .h extension).
     Also output LUT as binary data file (with .lut extension). This will be useful for programs that use it's own data structure format for the LUT.
