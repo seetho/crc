@@ -50,19 +50,15 @@ const uint8_t TestData[TEST_SIZE] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0
 void lut256_test(uint8_t *crc, const uint8_t lut[][CRC_SIZE]) {
     uint8_t idx = 0;
 
-    for (int i = 0; i < CRC_SIZE; i++)
+    for (int i = 0; i < CRC_SIZE; i++)          // zero the crc register first
         crc[i] = 0x00;
-    for (int i = 0; i < TEST_SIZE; i++) {
-        crc[0] ^= TestData[i];
-        idx = crc[0];
-        crc[0] = lut[idx][0];
-        if (CRC_SIZE > 1) {
-            for (int j = 1; j < CRC_SIZE; j++) {
-                crc[j-1] = crc[j];
-                crc[j] = 0x00;
-            }
-            for (int k = 0; k < CRC_SIZE; k++)
-                crc[k] ^= lut[idx][k];
+
+    for (int i = 0; i < TEST_SIZE; i++) {       // run through all the test data
+        idx = crc[0] ^ TestData[i];             // index into the LUT
+        for (int j = 0; j < CRC_SIZE; j++) {    // each byte of LUT value XORed with next byte of crc
+            crc[j] = lut[idx][j];               //      becomes the new crc value
+            if ((j+1) < CRC_SIZE)
+                crc[j] ^= crc[j+1];
         }
     }
 }
@@ -147,7 +143,7 @@ int main(void) {
         printf("%02X", crc[i]);
     printf("\n\n");
 
-    printf(STR(CRC_TYPE) " " STR(KPOLY) " (" STR(GPOLY) ") with 256-element LUTs:\n");
+    printf(STR(CRC_TYPE) " " STR(KPOLY) " (" STR(GPOLY) ") with 16-element LUTs:\n");
     // msb-1st test
     lut16_msb_test(crc, lut16_msb);
     printf("    msb-1st LUT check: 0x");

@@ -1,22 +1,29 @@
-PROGS = crc4 crc15 crc16 crc32
+MAINPROG = testcrc
+PROG4 = crc4
+PROG15 = crc15
+PROG16 = crc16
+PROG32 = crc32
 COMPILER = /usr/bin/gcc
 COMP_FLAGS = -Wall -std=c17
 DBG_FLAGS := $(COMP_FLAGS) -g -O0
 DIST_FLAGS := $(COMP_FLAGS) -O3
 
-all: $(PROGS)
+all: $(PROG4) $(PROG15) $(PROG16) $(PROG32)
 
-crc4: 
-	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC4 -o $@ testcrc.c 
+$(PROG4): $(MAINPROG).c 
+	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC4 -o $@ $<
 
-crc15: 
-	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC15 -o $@ testcrc.c 
+$(PROG15): $(MAINPROG).c 
+	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC15 -o $@ $< 
 
-crc16: 
-	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC16 -o $@ testcrc.c 
+$(PROG16): $(MAINPROG).c
+	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC16 -o $@ $<
 
-crc32: 
-	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC32 -o $@ testcrc.c 
+$(PROG32): $(MAINPROG).c
+	$(COMPILER) $(DBG_FLAGS) -D COMP_CRC32 -o $@ $< 
 
 clean:
-	rm $(PROGS)
+	rm $(PROG4)
+	rm $(PROG15) 
+	rm $(PROG16)
+	rm $(PROG32)
