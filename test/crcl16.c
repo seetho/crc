@@ -4,10 +4,18 @@
 
 #define LUT_SIZE    16
 
+// This will compile for msb-1st bit processing, otherwise lsb-1st 
+//#define MSB_MODE
+// ...or pass it from gcc with the -D option; e.g. -D MSB_MODE
+
 void print_usage(char *progname) {
     printf("%s LUT_Filename\n", progname);
     printf("Data is expected from STDIN.\n");
+#ifdef MSB_MODE    
+    printf("  e.g. %s 0x8810_16_msb.lut <check.dat\n", progname);
+#else
     printf("  e.g. %s 0x8810_16_lsb.lut <check.dat\n", progname);
+#endif
 }
 
 long get_filesize(FILE *fp) {
@@ -20,16 +28,28 @@ long get_filesize(FILE *fp) {
     return size;
 }
 
-void proc16_lsb(uint8_t *lut, uint8_t *crc, uint8_t sz, uint8_t data) {
+void proc16(uint8_t *lut, uint8_t *crc, uint8_t sz, uint8_t data) {
     uint8_t *lptr = NULL;
 
     *crc ^= data;
     for (int i = 0; i < 2; i++) {
+#ifdef MSB_MODE        
+        lptr = lut + (((*crc)>>4) * sz);
+#else
         lptr = lut + (((*crc) & 0x0F) * sz);
+#endif        
         for (int j = 0; j < sz; j++) {
+#ifdef MSB_MODE            
+            *(crc+j) = (*(crc+j)<<4) ^ *(lptr+j);
+#else
             *(crc+j) = (*(crc+j)>>4) ^ *(lptr+j);
+#endif            
             if ((j+1) < sz)
+#ifdef MSB_MODE                
+                *(crc+j) ^= *(crc+j+1)>>4;
+#else
                 *(crc+j) ^= *(crc+j+1)<<4;
+#endif            
         }
     }
 }
@@ -38,7 +58,7 @@ void do_crc(uint8_t *lut, uint8_t *crc, uint8_t sz) {
     uint8_t data;
 
     while (1 == fread(&data, 1, 1, stdin))
-        proc16_lsb(lut, crc, sz, data);
+        proc16(lut, crc, sz, data);
 }
 
 void print_crc(uint8_t *crc, uint8_t sz) {

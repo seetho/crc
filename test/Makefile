@@ -4,8 +4,7 @@ PROG15 = crc15
 PROG16 = crc16
 PROG32 = crc32
 PROGL256 = crcl256
-PROGL16MSB = crcl16msb
-PROGL16LSB = crcl16lsb
+PROGL16 = crcl16
 COMPILER = /usr/bin/gcc
 COMP_FLAGS = -Wall -std=c17
 DBG_FLAGS := $(COMP_FLAGS) -g -O0
@@ -28,10 +27,10 @@ $(PROG32): $(MAINPROG).c
 $(PROGL256): $(PROGL256).c
 	$(COMPILER) $(DBG_FLAGS) -o $@ $< 
 
-$(PROGL16MSB): $(PROGL16MSB).c
-	$(COMPILER) $(DBG_FLAGS) -o $@ $< 
+$(PROGL16)msb: $(PROGL16).c
+	$(COMPILER) $(DBG_FLAGS) -D MSB_MODE -o $@ $< 
 
-$(PROGL16LSB): $(PROGL16LSB).c
+$(PROGL16)lsb: $(PROGL16).c
 	$(COMPILER) $(DBG_FLAGS) -o $@ $< 
 
 clean:
@@ -40,5 +39,5 @@ clean:
 	rm $(PROG16)
 	rm $(PROG32)
 	rm $(PROGL256)
-	rm $(PROGL16MSB)
-	rm $(PROGL16LSB)
+	rm $(PROGL16)msb
+	rm $(PROGL16)lsb
